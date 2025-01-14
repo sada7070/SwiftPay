@@ -3,9 +3,11 @@ import z from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userModel } from "../db";
+import { authMiddleware } from "../middleware";
 
 const userRouter = Router();
 
+// '/api/v1/user/signup' requests comes here
 userRouter.post("/signup", async (req, res) => {
     const { userName, firstName, lastName, password} = req.body;
 
@@ -57,6 +59,7 @@ userRouter.post("/signup", async (req, res) => {
     }
 });
 
+// '/api/v1/user/signin' requests comes here
 userRouter.post("/signin", async (req, res) => {
     const { userName, password } = req.body;
    
@@ -77,7 +80,7 @@ userRouter.post("/signin", async (req, res) => {
     if(passwordMatched){
         const token = jwt.sign({
             // creating token using unique value(ObjectId)
-            id: userExist?._id
+            id: userExist!._id
         }, process.env.JWT_SECRET!);
 
         res.json({
@@ -88,6 +91,32 @@ userRouter.post("/signin", async (req, res) => {
             message: "Wrong password."
         })
     }
+})
+
+// Route to update user information
+userRouter.put("/", authMiddleware, async (req, res) => {
+    const updateBody = z.object({
+        password: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional()
+    })
+
+    const parseData = updateBody.safeParse(req.body);
+
+    if(!parseData.success) {
+        res.status(411).json({
+            message: "Error while updating information."
+        })
+    }
+
+    await userModel.updateOne(req.body, {
+        // @ts-ignore
+        id: req.userId
+    })
+
+    res.json({
+        message: "Updated successfully."
+    })
 })
 
 export default userRouter;
