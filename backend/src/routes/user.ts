@@ -37,12 +37,14 @@ userRouter.post("/signup", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 5);
 
         // pushing data to DB
-        await userModel.create({
+        const user = await userModel.create({
             userName,
             firstName,
             lastName,
             password: hashedPassword
         })
+
+        const userId = user.id;   
         // if userName is already exist, it will throw an error
     } catch(e) {
         res.status(409).json({
