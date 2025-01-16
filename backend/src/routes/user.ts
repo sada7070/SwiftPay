@@ -2,7 +2,7 @@ import { Router } from "express";
 import z from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { userModel } from "../db";
+import { accountModel, userModel } from "../db";
 import { authMiddleware } from "../middleware";
 
 const userRouter = Router();
@@ -44,7 +44,14 @@ userRouter.post("/signup", async (req, res) => {
             password: hashedPassword
         })
 
-        const userId = user.id;   
+        const userId = user._id;
+
+        // adding initial random balance
+        await accountModel.create({
+            userId,
+            balance: 1 + Math.random() * 10000
+        })
+
         // if userName is already exist, it will throw an error
     } catch(e) {
         res.status(409).json({
