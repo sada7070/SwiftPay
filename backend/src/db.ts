@@ -21,7 +21,7 @@ const accountSchema = new Schema({
     ref: "User",
     required: true,
   },
-  balance: { type: number, required: true },
+  balance: { type: Number, required: true },
 });
 
 export const accountModel = model("Account", accountSchema);
