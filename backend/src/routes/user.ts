@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { accountModel, userModel } from "../db";
 import { authMiddleware } from "../middleware";
+import AuthenticatedRequest from "../middleware";
 
 const userRouter = Router();
 
@@ -103,7 +104,7 @@ userRouter.post("/signin", async (req, res) => {
 })
 
 // Route to update user information
-userRouter.put("/", authMiddleware, async (req, res) => {
+userRouter.put("/", authMiddleware, async (req: AuthenticatedRequest, res) => {
     const updateBody = z.object({
         password: z.string().optional(),
         firstName: z.string().optional(),
@@ -116,12 +117,12 @@ userRouter.put("/", authMiddleware, async (req, res) => {
         res.status(411).json({
             message: "Error while updating information."
         })
+        return;
     }
 
-    await userModel.updateOne(req.body, {
-        // @ts-ignore
-        id: req.userId
-    })
+    await userModel.updateOne({
+        _id: req.userId
+    }, req.body);
 
     res.json({
         message: "Updated successfully."

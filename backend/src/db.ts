@@ -1,5 +1,4 @@
 import mongoose, { model, Schema } from "mongoose";
-import { number } from "zod";
 
 mongoose.connect(process.env.DB_CONNECTION_STRING!);
 

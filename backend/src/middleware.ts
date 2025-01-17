@@ -1,17 +1,23 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const header = req.headers.authorization;
-    const decoded = jwt.verify(header as string, process.env.JWT_SECRET!);
+// Extend the Request interface to include userId
+interface AuthenticatedRequest extends Request {
+    userId?: string;
+}
+
+export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const header = req.headers["authorization"];
+    const decoded = jwt.verify(header as string, process.env.JWT_SECRET!) as JwtPayload;
 
     if(decoded) {
-        //@ts-ignore
-        req.userId = decoded.userId;
+        req.userId = decoded.id;
         next();
     } else {
         res.status(403).json({
             message: "Unauthorized: Invalid token."
         })
     }
-}   
+}
+
+export default AuthenticatedRequest;
