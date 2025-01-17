@@ -3,7 +3,7 @@ import cors from "cors";
 require('dotenv').config();
 const app = express();
 
-//the route parser, middlewares etc.. should be declared before the routers is using them.
+//the route parser, middlewares etc.. should be declared before the routers is using them. Hence 'rootRouter' is defined later.
 app.use(cors());
 app.use(express.json());
 
