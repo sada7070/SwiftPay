@@ -1,8 +1,8 @@
-import { Button } from "../components/button"
-import { ButtonWarning } from "../components/buttonWarning"
-import { Heading } from "../components/heading"
-import { InputBox } from "../components/inputBox"
-import { SubHeading } from "../components/subHeading"
+import { Button } from "../components/Button"
+import { ButtonWarning } from "../components/ButtonWarning"
+import { Heading } from "../components/Heading"
+import { InputBox } from "../components/InputBox"
+import { SubHeading } from "../components/SubHeading"
 
 export const Signin = () => {
     return <div className="bg-slate-300 h-screen flex justify-center">
