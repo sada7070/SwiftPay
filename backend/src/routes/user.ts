@@ -10,76 +10,78 @@ const userRouter = Router();
 
 // '/api/v1/user/signup' requests comes here
 userRouter.post("/signup", async (req, res) => {
-    const { userName, firstName, lastName, password} = req.body;
+    const { email, firstName, lastName, password } = req.body;
 
-    // input validation using zod
+    // Input validation using zod
     const requiredBody = z.object({
-        userName: z.string().min(4).max(20),
+        email: z.string().email(),
         firstName: z.string().max(20),
         lastName: z.string().max(20),
-        password: z.string().min(4).max(20)
-    })
+        password: z.string().min(4).max(20),
+    });
 
     const parseData = requiredBody.safeParse(req.body);
 
-    if(!parseData.success) {
+    if (!parseData.success) {
         res.status(411).json({
             message: "Incorrect format.",
-            // to print the error
-            error: parseData.error
-        })
+            error: parseData.error,
+        });
         return;
     }
 
-    let errorThrown = false;
+    try {
+        // Check if the email already exists in the database
+        const existingUser = await userModel.findOne({ email });
+        if (existingUser) {
+            res.status(409).json({
+                message: "Email already exists.",
+            });
+            return;
+        }
 
-    try{
-        // hashing password
+        // Hashing password
         const hashedPassword = await bcrypt.hash(password, 5);
 
-        // pushing data to DB
+        // Creating user in the database
         const user = await userModel.create({
-            userName,
+            email,
             firstName,
             lastName,
-            password: hashedPassword
-        })
+            password: hashedPassword,
+        });
 
         const userId = user._id;
 
-        // adding initial random balance
+        // Adding initial random balance
         await accountModel.create({
             userId,
-            balance: 1 + Math.random() * 10000
-        })
+            balance: 1 + Math.random() * 10000,
+        });
 
-        // if userName is already exist, it will throw an error
-    } catch(e) {
-        res.status(409).json({
-            message: "Username already exist."
-        })
-        errorThrown = true;
-    }
-
-    if(!errorThrown) {
         res.status(200).json({
-            message: "You are signed up."
-        })
-        return;
+            message: "You are signed up.",
+        });
+    } catch (error) {
+        console.error("Error during signup:", error);
+        res.status(500).json({
+            message: "Internal server error.",
+        });
     }
 });
 
+
 // '/api/v1/user/signin' requests comes here
 userRouter.post("/signin", async (req, res) => {
-    const { userName, password } = req.body;
+    const { email, password } = req.body;
    
     const userExist = await userModel.findOne({
-        userName: userName
+        email: email
     })
 
     if(!userExist) {
         res.status(403).json({
-            message: "Username does not exist."
+            message: "email does not exist."
         })
         return;
     }
@@ -147,7 +149,7 @@ userRouter.get("/bulk", async (req, res) => {
 
     res.json({
         user: users.map(user => ({
-            userName: user.userName,
+            email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
             _id: user._id

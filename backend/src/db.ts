@@ -3,7 +3,7 @@ import mongoose, { model, Schema } from "mongoose";
 mongoose.connect(process.env.DB_CONNECTION_STRING!);
 
 const userSchema = new Schema({
-  userName: {
+  email: {
     type: String,
     unique: true
   },
@@ -23,4 +23,4 @@ const accountSchema = new Schema({
   balance: { type: Number, required: true },
 });
 
-export const accountModel = model("Account", accountSchema);
+export const accountModel = model("Account", accountSchema);  
