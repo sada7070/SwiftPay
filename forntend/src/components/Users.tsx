@@ -8,7 +8,7 @@ export const Users= () => {
         _id: 1
     }]);
 
-    return <div>
+    return <div className="px-8">
         <div className="font-bold mt-6 text-lg">
             Users
         </div>
@@ -46,7 +46,7 @@ function User({user}: UserProps) {
             </div>
         </div>
 
-        <div className="felx flex-col justify-center h-full mr-3">
+        <div className="felx flex-col justify-center h-full">
             <Button label={"Send Money"} onClick={() =>{
 
             }} />
