@@ -59,8 +59,14 @@ userRouter.post("/signup", async (req, res) => {
             balance: 1 + Math.random() * 10000,
         });
 
+        // creating token
+        const token = jwt.sign({
+            userId
+        }, process.env.JWT_SECRET!);
+
         res.status(200).json({
             message: "You are signed up.",
+            token: token
         });
     } catch (error) {
         console.error("Error during signup:", error);
@@ -69,7 +75,6 @@ userRouter.post("/signup", async (req, res) => {
         });
     }
 });
-
 
 // '/api/v1/user/signin' requests comes here
 userRouter.post("/signin", async (req, res) => {
@@ -81,7 +86,7 @@ userRouter.post("/signin", async (req, res) => {
 
     if(!userExist) {
         res.status(403).json({
-            message: "email does not exist."
+            message: "Email does not exist."
         })
         return;
     }
