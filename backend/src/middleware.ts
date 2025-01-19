@@ -9,9 +9,9 @@ interface AuthenticatedRequest extends Request {
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const header = req.headers["authorization"];
     const decoded = jwt.verify(header as string, process.env.JWT_SECRET!) as JwtPayload;
-
+    
     if(decoded) {
-        req.userId = decoded.id;
+        req.userId = decoded.userId;
         next();
     } else {
         res.status(403).json({

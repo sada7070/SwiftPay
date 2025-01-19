@@ -27,7 +27,15 @@ accountRouter.post("/transfer", authMiddleware, async(req: AuthenticatedRequest,
     // Fetch the accounts within the transaction
     const account = await accountModel.findOne({ userId: req.userId }).session(session);
 
-    if (!account || account.balance < amount) {
+    if(!account) {
+        await session.abortTransaction();
+        res.status(411).json({
+            message: "Account not found."
+        })
+        return;
+    }
+
+    if (account.balance < amount) {
         await session.abortTransaction();
         res.status(400).json({
             message: "Insufficient balance."
