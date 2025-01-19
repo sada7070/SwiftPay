@@ -5,12 +5,14 @@ import { Heading } from "../components/Heading"
 import { InputBox } from "../components/InputBox"
 import { SubHeading } from "../components/SubHeading"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 export const Signup = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     return <div className="bg-slate-300 h-screen flex justify-center">
         <div className="flex flex-col justify-center">
@@ -18,10 +20,12 @@ export const Signup = () => {
                 <Heading label={"Sign Up"} />
                 <SubHeading label={"Enter your information to create your account"} />
                 <InputBox onchange={(e) => {
-                    setFirstName(e.target.value);
+                     const value = e.target.value;
+                     setFirstName(value.charAt(0).toUpperCase() + value.slice(1));
                 }} label={"First Name"} placeholder={"John"} />
                 <InputBox onchange={(e) => {
-                    setLastName(e.target.value);
+                     const value = e.target.value;
+                     setLastName(value.charAt(0).toUpperCase() + value.slice(1));
                 }} label={"Last Name"} placeholder={"Smith"} />
                 <InputBox onchange={(e) => {
                     setEmail(e.target.value);
@@ -29,13 +33,15 @@ export const Signup = () => {
                 <InputBox onchange={(e) => {
                     setPassword(e.target.value);
                 }} label={"Password"} placeholder={"1234"} />
-                <Button onClick={() => {
-                    axios.post("http://localhost:3000/api/v1/user/signup", {
+                <Button onClick={async() => {
+                    const response = await axios.post("http://localhost:3000/api/v1/user/signup", {
                         firstName,
                         lastName,
                         email,
                         password
-                    })
+                    });
+                    localStorage.setItem("token", response.data.token);
+                    navigate("/dashboard");
                 }} label={"Sign up"} />
                 <ButtonWarning label={"Already have an account?"} buttonText={"Sign In"} to={"/signin"} />
             </div>

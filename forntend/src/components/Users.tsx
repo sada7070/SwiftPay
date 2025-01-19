@@ -1,19 +1,29 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "./Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const Users= () => {
-    const[users, setUsers] = useState([{
-        firstName: "Sada",
-        lastName: "Shiva",
-        _id: 1
-    }]);
+    const[users, setUsers] = useState([]);                      // to list all users.
+    const[filter, setFilter] = useState("");                    // for search input.
+
+    // add debouncing here
+    useEffect(() => {
+        // to list users from DB.
+        axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter)
+            .then(response => {
+                setUsers(response.data.user);
+            })
+    }, [filter]);
 
     return <div className="px-8">
         <div className="font-bold mt-6 text-lg">
             Users
         </div>
         <div className="my-2">
-            <input type="text" placeholder="Search users..." className="w-full px-2 py-1 border border-rounded border-slate-200"></input>
+            <input onChange={(e) => {
+                setFilter(e.target.value);
+            }} type="text" placeholder="Search users..." className="w-full px-2 py-1 border border-rounded border-slate-200"></input>
         </div>
 
         {/* The below line is using the JavaScript map() method to iterate over the 'users' array and render a 'User' component for each user in the array. */}
@@ -30,8 +40,10 @@ type UserProps = {
     _id: number;
     }
 }
-// 'User' component
+// 'User' component.
 function User({user}: UserProps) {
+    const navigate = useNavigate();
+
     return <div className="flex justify-between">
         <div className="flex">
             <div className="rounded-full w-10 h-10 bg-slate-200 flex justify-center mt-1 mr-2">
@@ -47,9 +59,9 @@ function User({user}: UserProps) {
         </div>
 
         <div className="felx flex-col justify-center h-full">
-            <Button label={"Send Money"} onClick={() =>{
-
-            }} />
+            <Button onClick={() =>{
+                navigate(`/transfer?id=${user._id}&fName=${user.firstName}&lName=${user.lastName}`);
+            }}  label={"Send Money"} />
         </div>
     </div>
 }
