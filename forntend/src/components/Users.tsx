@@ -13,7 +13,7 @@ export const Users= () => {
             Users
         </div>
         <div className="my-2">
-            <input type="text" placeholder="Search users..." className="w-full px-2 py-1 border-rounded border-slate-200"></input>
+            <input type="text" placeholder="Search users..." className="w-full px-2 py-1 border border-rounded border-slate-200"></input>
         </div>
 
         {/* The below line is using the JavaScript map() method to iterate over the 'users' array and render a 'User' component for each user in the array. */}
