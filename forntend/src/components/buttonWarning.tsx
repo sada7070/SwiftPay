@@ -11,7 +11,7 @@ export function ButtonWarning({label, buttonText, to}: ButtonWarningProos) {
         <div>
             {label}
         </div>
-        <Link className="pointer underline pl-1 cursor-pointer" to={to}>
+        <Link className="pointer underline pl-1" to={to}>
             {buttonText}
         </Link>
     </div>

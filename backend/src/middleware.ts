@@ -7,17 +7,17 @@ interface AuthenticatedRequest extends Request {
 }
 
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const header = req.headers["authorization"];
-    const decoded = jwt.verify(header as string, process.env.JWT_SECRET!) as JwtPayload;
-    
-    if(decoded) {
+    const header = req.headers["Authorization"];
+
+    try{
+        const decoded = jwt.verify(header as string, process.env.JWT_SECRET!) as JwtPayload;
         req.userId = decoded.userId;
         next();
-    } else {
+    } catch {
         res.status(403).json({
             message: "Unauthorized: Invalid token."
-        })
+        });
     }
-}
+};
 
-export default AuthenticatedRequest;
+export { AuthenticatedRequest };

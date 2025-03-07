@@ -2,7 +2,7 @@ type InputBoxProps = {
     label: string;
     placeholder: string;
     onchange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+}           
 
 export function InputBox({label, placeholder, onchange}: InputBoxProps) {
     return <div>

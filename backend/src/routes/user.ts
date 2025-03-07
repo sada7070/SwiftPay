@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { accountModel, userModel } from "../db";
 import { authMiddleware } from "../middleware";
-import AuthenticatedRequest from "../middleware";
+import { AuthenticatedRequest } from "../middleware";
 
 const userRouter = Router();
 
