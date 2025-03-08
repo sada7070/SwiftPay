@@ -7,3 +7,4 @@ export function Heading({label}: LabelProps) {
         {label}
     </div>
 }
+
